@@ -14,7 +14,7 @@ bg = (255, 200, 150)
 bodyInner = (50, 100, 25)
 bodyOuter = (100,100,100)
 red = (255,0,0)
-player_img = pygame.image.load('snakeset.png')
+
 apple_img = pygame.image.load('apple.png')
 grass_img = pygame.image.load('grass.JPG')
 end_img = pygame.image.load('end.JPG')
@@ -47,6 +47,29 @@ class World():
             screen.blit(tile[0], tile[1])
 
 
+world_data =[
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+]
+
 # class Snake_head():
 #     def __init__(self,x,y):
 #         self.image = pygame.transform.scale(head_img, (30, 30))
@@ -72,7 +95,6 @@ bg = (200, 200, 150)
 world = World(world_data)
 
 
-
 run = True;
 while run:
     draw_screen()
@@ -85,16 +107,17 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
                 run == False
-
-    head = 1
-    for x in snake_pos:
-        if head == 0:
-            pygame.draw.rect(screen, bodyInner, (x[0]+1, x[1]+1, cell_size-2, cell_size-2))
-        if head == 1:
-            pygame.draw.rect(screen, red, (x[0] + 1, x[1] + 1, cell_size - 2, cell_size - 2))
-            head = 0
+    #
+    # head = 1
+    # for x in snake_pos:
+    #     if head == 0:
+    #         pygame.draw.rect(screen, bodyInner, (x[0]+1, x[1]+1, cell_size-2, cell_size-2))
+    #     if head == 1:
+    #         pygame.draw.rect(screen, red, (x[0] + 1, x[1] + 1, cell_size - 2, cell_size - 2))
+    #         head = 0
     pygame.display.update()
-pygame.quit;
+
+pygame.quit
 
 
 
