@@ -3,23 +3,22 @@ from typing import List
 from random import randrange
 import pygame
 
-
-GREEN = (0, 255, 0)
-DARKGREEN = (0, 155,0)
-
 UP = 'up'
 DOWN = 'down'
 LEFT = 'left'
 RIGHT = 'right'
 
-
+CELL_SIZE = 20
 HEAD_INDEX = 0
+
+
 
 @dataclass
 class Snake:
     length: int
     color: tuple
     snake_placement = [190, 210, 230, 250, 270]
+
     COLORS = [(255,0, 0), (0, 0, 255), (100, 100, 100), (150, 150, 150), (200, 200, 200)]
 
     def update_colors(self):
@@ -33,14 +32,17 @@ class Snake:
     def is_color_same(self, new_color: tuple) -> bool:
         return new_color == self.color
 
-
 @dataclass
 class World:
     snake: Snake
     num_of_obstacles: int
+    obstacles_placements = list()
+    list_of_obstacles: list = field(init=False)
+    list_of_fruits: list = field(init=False)
+    world_data : list = field(init=False)
     world_map: List[int] = field(default_factory=list)
     CELL_SIZE = 20
-    background = 'background.jpg'
+
 
 
     def __post_init__(self):
@@ -48,18 +50,16 @@ class World:
             self.world_map.append(0)
         self.place_obstacles()
 
-
     # 150, 170
     # 190, 210, 230, 250, 270, 290
 
     def place_obstacles(self):
-        obstacles_placements = list()
         snake_start_placements_ = list([170, 190, 210, 230, 250, 270, 290])
-        while len(obstacles_placements) < self.num_of_obstacles:
+        while len(self.obstacles_placements) < self.num_of_obstacles:
             num = randrange(self.CELL_SIZE * self.CELL_SIZE)
-            if num not in obstacles_placements:
+            if num not in self.obstacles_placements:
                 if num not in snake_start_placements_:
-                    obstacles_placements.append(num)
+                    self.obstacles_placements.append(num)
                     self.world_map.pop(num)
                     self.world_map.insert(num, 1)
 
@@ -71,7 +71,7 @@ class World:
         run = True
         while run:
             num = randrange(self.CELL_SIZE * self.CELL_SIZE)
-            if self.world_map[num] != 1:
+            if self.world_map[num] != 1 and self.world_map[num] != 3:
                 run = False
                 self.world_map.pop(num)
                 self.world_map.insert(num, 2)
@@ -88,35 +88,40 @@ class World:
 
     def move_snake(self, direction: str):
         if direction == UP:
-            newHead = s.snake_placement[0] - self.CELL_SIZE
+            newHead = self.snake.snake_placement[0] - self.CELL_SIZE
             if (newHead < 0):
-                newHead = s.snake_placement[0] + 380
+                newHead = self.snake.snake_placement[0] + 380
         elif direction == DOWN:
-            newHead = s.snake_placement[0] + self.CELL_SIZE
+            newHead = self.snake.snake_placement[0] + self.CELL_SIZE
             if(newHead > 400):
-                newHead = s.snake_placement[0]-380
+                newHead = self.snake.snake_placement[0]-380
         elif direction == LEFT:
-            newHead = s.snake_placement[0]+1
+            newHead = self.snake.snake_placement[0]+1
             if(newHead % 20 == 0):
-                newHead = s.snake_placement[0] + 19
+                newHead = self.snake.snake_placement[0] + 19
         elif direction == RIGHT:
-            newHead = s.snake_placement[0]+1
+            newHead = self.snake.snake_placement[0]+1
             if (newHead % 20 == 1):
-                newHead = s.snake_placement[0] - 19
+                newHead = self.snake.snake_placement[0] - 19
 
-
-    def has_hit_obstacle(self, direction):
-            for obstacle_placement in self.world_map:
-                if (obstacle_placement == 1):
-                    pass
-
+    def has_hit_obstacle(self, direction) -> bool:
+            for var in self.place_obstacles():
+                if(self.snake.snake_placement[HEAD_INDEX] == var):
+                    return True
 
     def has_eaten_fruit(self):
         pass
 
     def has_suicided(self) -> bool:
+        isHead = True
+        for var in self.snake.snake_placement:
+            if var == self.snake.snake_placement[HEAD_INDEX]:
+                if(isHead):
+                    pass
+                else:
+                    return True
+            isHead = False
         pass
-
 
     def print_world(self):
         print(len(self.world_map))
@@ -126,7 +131,5 @@ class World:
             print(self.world_map[start: end])
 
 
-s = Snake(length=5, color=(0, 0, 0))
-w = World(num_of_obstacles=30, snake=s)
 
 
