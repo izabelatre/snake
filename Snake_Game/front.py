@@ -89,9 +89,9 @@ class Game:
             #NUM_OF_FRUITS_TO_WIN, fruit_counter
             #direction right, bottom str...
             self.world.move_snake(self.direction)
-
             self.move_counter = 0
             self.world.print_world()
+
 
 
 g = Game()

@@ -37,7 +37,6 @@ class World:
     snake: Snake
     num_of_obstacles: int
     obstacles_placements = list()
-
     list_of_obstacles: list = field(init=False)
     list_of_fruits: list = field(init=False)
     world_data : list = field(init=False)
@@ -45,12 +44,11 @@ class World:
     CELL_SIZE = 20
 
 
-
     def __post_init__(self):
         for i in range(0, self.CELL_SIZE * self.CELL_SIZE):
             self.world_map.append(0)
         self.place_obstacles()
-        fruit_eaten = False
+        self.fruit_eaten = False
 
     # 150, 170
     # 190, 210, 230, 250, 270, 290
@@ -66,10 +64,10 @@ class World:
                     self.world_map.insert(num, 1)
 
     def place_fruit(self):
-        if 2 in self.world_map:
-            index = self.world_map.index(2)
-            self.world_map.pop(index)
-            self.world_map.insert(index, 0)
+        # if 2 in self.world_map:
+        #     index = self.world_map.index(2)
+        #     self.world_map.pop(index)
+        #     self.world_map.insert(index, 0)
         run = True
         while run:
             num = randrange(self.CELL_SIZE * self.CELL_SIZE)
@@ -115,12 +113,14 @@ class World:
                 newHead = self.snake.snake_placement[0] - 19
 
         self.snake.snake_placement.insert(HEAD_INDEX, newHead)
-        tail_value = self.snake.snake_placement[len(self.snake.snake_placement)-1]
-        self.world_map.pop(tail_value)
-        self.world_map.insert(tail_value, 0)
-        self.snake.snake_placement.pop(len(self.snake.snake_placement)-1)
+        if (self.has_eaten_fruit(self.world_map[newHead])== False):
+            tail_value = self.snake.snake_placement[len(self.snake.snake_placement)-1]
+            self.world_map.pop(tail_value)
+            self.world_map.insert(tail_value, 0)
+            self.snake.snake_placement.pop(len(self.snake.snake_placement)-1)
         self.world_map.pop(newHead)
         self.world_map.insert(newHead, 3)
+
 
 
     def has_hit_obstacle(self, direction) -> bool:
@@ -128,9 +128,12 @@ class World:
                 if(self.snake.snake_placement[HEAD_INDEX] == var):
                     return True
 
-    def has_eaten_fruit(self):
-        if(self.world_map[self.snake.snake_placement[HEAD_INDEX]] == 2):
-            self.fruit_eaten = True
+    def has_eaten_fruit(self, x) -> bool:
+        if( x == 2):
+            self.place_fruit()
+            return True
+        else:
+            return False
 
 
     def has_suicided(self) -> bool:
