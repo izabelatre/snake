@@ -3,11 +3,23 @@ from typing import List
 from random import randrange
 import pygame
 
-@dataclass
 
+GREEN = (0, 255, 0)
+DARKGREEN = (0, 155,0)
+
+UP = 'up'
+DOWN = 'down'
+LEFT = 'left'
+RIGHT = 'right'
+
+
+HEAD_INDEX = 0
+
+@dataclass
 class Snake:
     length: int
     color: tuple
+    snake_placement = [190, 210, 230, 250, 270]
     COLORS = [(255,0, 0), (0, 0, 255), (100, 100, 100), (150, 150, 150), (200, 200, 200)]
 
     def update_colors(self):
@@ -70,17 +82,41 @@ class World:
             print(index)
             return self.world_map[index]
 
-    def place_snake_start(self, direction: str):
-        pass
+    # 190, 210, 230, 250, 270
+    # def place_snake_start(direction: str):
+    #     pass
 
     def move_snake(self, direction: str):
-        pass
+        if direction == UP:
+            newHead = s.snake_placement[0] - self.CELL_SIZE
+            if (newHead < 0):
+                newHead = s.snake_placement[0] + 380
+        elif direction == DOWN:
+            newHead = s.snake_placement[0] + self.CELL_SIZE
+            if(newHead > 400):
+                newHead = s.snake_placement[0]-380
+        elif direction == LEFT:
+            newHead = s.snake_placement[0]+1
+            if(newHead % 20 == 0):
+                newHead = s.snake_placement[0] + 19
+        elif direction == RIGHT:
+            newHead = s.snake_placement[0]+1
+            if (newHead % 20 == 1):
+                newHead = s.snake_placement[0] - 19
+
 
     def has_hit_obstacle(self, direction):
-        pass
+            for obstacle_placement in self.world_map:
+                if (obstacle_placement == 1):
+                    pass
+
 
     def has_eaten_fruit(self):
         pass
+
+    def has_suicided(self) -> bool:
+        pass
+
 
     def print_world(self):
         print(len(self.world_map))
