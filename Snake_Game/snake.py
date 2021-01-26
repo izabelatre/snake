@@ -37,6 +37,7 @@ class World:
     snake: Snake
     num_of_obstacles: int
     obstacles_placements = list()
+
     list_of_obstacles: list = field(init=False)
     list_of_fruits: list = field(init=False)
     world_data : list = field(init=False)
@@ -49,6 +50,7 @@ class World:
         for i in range(0, self.CELL_SIZE * self.CELL_SIZE):
             self.world_map.append(0)
         self.place_obstacles()
+        fruit_eaten = False
 
     # 150, 170
     # 190, 210, 230, 250, 270, 290
@@ -79,30 +81,47 @@ class World:
     def value_at_coordinates(self, row: int, column: int) -> int:
         if row < self.CELL_SIZE and column < self.CELL_SIZE:
             index = row*20 + column
-            print(index)
             return self.world_map[index]
 
-    # 190, 210, 230, 250, 270
-    # def place_snake_start(direction: str):
-    #     pass
+
+    def snake_placement(self):
+         for place in self.snake.snake_placement:
+            self.world_map.insert(place, 3)
 
     def move_snake(self, direction: str):
+
         if direction == UP:
             newHead = self.snake.snake_placement[0] - self.CELL_SIZE
+            #print(self.snake.snake_placement[0])
             if (newHead < 0):
                 newHead = self.snake.snake_placement[0] + 380
+
         elif direction == DOWN:
             newHead = self.snake.snake_placement[0] + self.CELL_SIZE
+            #print(self.snake.snake_placement[0])
             if(newHead > 400):
                 newHead = self.snake.snake_placement[0]-380
+
         elif direction == LEFT:
-            newHead = self.snake.snake_placement[0]+1
-            if(newHead % 20 == 0):
+            newHead = self.snake.snake_placement[0]-1
+            #(self.snake.snake_placement[0])
+            if(newHead % 20 == 19):
                 newHead = self.snake.snake_placement[0] + 19
+
         elif direction == RIGHT:
             newHead = self.snake.snake_placement[0]+1
-            if (newHead % 20 == 1):
+            #print(self.snake.snake_placement[0])
+            if (newHead % 20 == 0):
                 newHead = self.snake.snake_placement[0] - 19
+
+        self.snake.snake_placement.insert(HEAD_INDEX, newHead)
+        tail_value = self.snake.snake_placement[len(self.snake.snake_placement)-1]
+        self.world_map.pop(tail_value)
+        self.world_map.insert(tail_value, 0)
+        self.snake.snake_placement.pop(len(self.snake.snake_placement)-1)
+        self.world_map.pop(newHead)
+        self.world_map.insert(newHead, 3)
+
 
     def has_hit_obstacle(self, direction) -> bool:
             for var in self.place_obstacles():
@@ -110,7 +129,9 @@ class World:
                     return True
 
     def has_eaten_fruit(self):
-        pass
+        if(self.world_map[self.snake.snake_placement[HEAD_INDEX]] == 2):
+            self.fruit_eaten = True
+
 
     def has_suicided(self) -> bool:
         isHead = True
@@ -124,11 +145,11 @@ class World:
         pass
 
     def print_world(self):
-        print(len(self.world_map))
         for i in range(0, self.CELL_SIZE):
             start: int = 0 + i*20
             end: int = 20 + i*20
             print(self.world_map[start: end])
+        print("////////////////")
 
 
 

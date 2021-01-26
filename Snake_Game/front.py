@@ -16,7 +16,11 @@ class Game:
     window: pygame.display = field(init=False)
     WINDOW_SIZE = 600
     TILE_SIZE = 30
+    NEEDED_TO_MOVE = 30
     clock = pygame.time.Clock()
+    move_counter = 0
+    direction = 'up'
+    #left right up down
 
     def __post_init__(self):
         pygame.init()
@@ -29,18 +33,43 @@ class Game:
         self.window.fill((0, 0, 0))
         self.world.place_obstacles()
         self.world.place_fruit()
+        self.world.snake_placement()
 
-        while True:
+        run = True
+        while run:
             for i in range(0, self.world.CELL_SIZE):
                 for j in range(0, self.world.CELL_SIZE):
                     self.place_tile(i, j)
-
+            self.move()
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
+                if event.type == KEYDOWN:
+                    if event.key == K_DOWN:
+                        if(self.direction != 'up'):
+                            self.direction = 'down'
+                            print("DOWN")
+
+                    elif event.key == K_UP:
+                        if(self.direction != 'down'):
+                            self.direction ='up'
+                            print("UP")
+
+                    elif event.key == K_RIGHT:
+                        if(self.direction != 'left'):
+                            self.direction ='right'
+                            print("RIGHT")
+
+                    elif event.key == K_LEFT:
+                        if(self.direction != 'right'):
+                            self.direction ='left'
+                            print("LEFT")
+
             pygame.display.update()
+
             self.clock.tick(60)
+            self.move_counter += 1
 
     def place_tile(self, column: int, row: int):
         if self.world.value_at_coordinates(row=row, column=column) == 0:
@@ -50,8 +79,20 @@ class Game:
         elif self.world.value_at_coordinates(row=row, column=column) == 2:
             self.window.blit(self.APPLE_IMG, (column * self.TILE_SIZE, row * self.TILE_SIZE))
         elif self.world.value_at_coordinates(row=row, column=column) == 3:
-            snake_part = pygame,Rect(column* self.TILE_SIZE, row*self.TILE_SIZE, self.TILE_SIZE, self.TILE_SIZE)
-            pygame.draw.rect(self.window, self.world.snake.color, snake_part)
+            snake_part = pygame.Rect(column * self.TILE_SIZE, row*self.TILE_SIZE, self.TILE_SIZE, self.TILE_SIZE)
+            snake_part_inner = pygame.Rect(column * self.TILE_SIZE + 4, row*self.TILE_SIZE +4, self.TILE_SIZE-8, self.TILE_SIZE-8)
+            pygame.draw.rect(self.window, (150,255,100), snake_part)
+            pygame.draw.rect(self.window, (0,0,0), snake_part_inner)
+
+    def move(self):
+        if not self.move_counter < self.NEEDED_TO_MOVE:
+            #NUM_OF_FRUITS_TO_WIN, fruit_counter
+            #direction right, bottom str...
+            self.world.move_snake(self.direction)
+
+            self.move_counter = 0
+            self.world.print_world()
+
 
 g = Game()
 g.game()
