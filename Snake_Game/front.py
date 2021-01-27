@@ -1,3 +1,4 @@
+import datetime
 import sys
 from dataclasses import dataclass, field
 
@@ -6,8 +7,14 @@ from pygame.locals import *
 
 from Snake_Game import snake
 
+pygame.display.set_caption('Snake Game')
+
+
+
 @dataclass
 class Game:
+    pygame.font.init()
+    m_font = pygame.font.Font('freesansbold.ttf', 18)
     BACKGROUND = pygame.image.load('apple.png')
     APPLE_IMG = pygame.image.load('apple.png')
     GRASS_IMG = pygame.image.load('grass.JPG')
@@ -15,6 +22,7 @@ class Game:
     START_IMG = pygame.image.load('start.png')
     HEAD_UP_IMG = pygame.image.load('head_up.JPG')
     GAME_OVER_IMG = pygame.image.load('gameOver.png')
+    VICTORY_IMG = pygame.image.load('VICTORY.png')
     world = snake.World(snake.Snake(5,(200,200,200)), 25)
     window: pygame.display = field(init=False)
     WINDOW_SIZE = 600
@@ -37,8 +45,11 @@ class Game:
         self.HEAD_DOWN_IMG = pygame.transform.rotate(self.HEAD_UP_IMG, 180)
         self.HEAD_RIGHT_IMG = pygame.transform.rotate(self.HEAD_UP_IMG, 270)
         self.GAME_OVER_IMG = pygame.transform.scale(self.GAME_OVER_IMG, (self.WINDOW_SIZE, self.WINDOW_SIZE))
+        self.VICTORY_IMG = pygame.transform.scale(self.VICTORY_IMG, (self.WINDOW_SIZE-200, self.WINDOW_SIZE-400))
+        self.start_time = field(default=datetime.datetime.now())
 
-    def checkForKeyPress():
+
+    def checkForKeyPress(self):
         if len(pygame.event.get(QUIT)) > 0:
             pygame.quit()
             sys.exit()
@@ -57,7 +68,13 @@ class Game:
         run = True
         while run:
             self.window.fill((0,0,0))
-            self.window.blit(self.START_IMG,(150,200))
+            self.window.blit(self.START_IMG,(150,100))
+            pressKeySurf = self.m_font.render('Press a key to play.', True, (0,255,0))
+            pressKeyRect = pressKeySurf.get_rect()
+            pressKeyRect.topleft = (400, 570)
+            self.window.blit(pressKeySurf, pressKeyRect)
+            self.world.apples_to_win = 1
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
@@ -67,6 +84,8 @@ class Game:
                         pygame.event.get()  # clear event queue
                         run = False
                         self.game()
+
+
             pygame.display.update()
             self.clock.tick(20)
 
@@ -75,7 +94,7 @@ class Game:
         self.world.place_obstacles()
         self.world.place_fruit()
         self.world.snake_placement()
-
+        self.start_time = datetime.datetime.now()
         run = True
         while run:
             for i in range(0, self.world.CELL_SIZE):
@@ -87,6 +106,7 @@ class Game:
                 self.end_game()
             if(self.world.fruit_eaten):
                 run = False
+                self.happy_end_game()
 
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -119,20 +139,59 @@ class Game:
             self.move_counter += 1
 
     def happy_end_game(self):
-        pass
+        running = True
+        end_time = datetime.datetime.now()
+        diff = end_time - self.start_time
+        print(diff)
+        while running:
+            self.window.fill((10, 10, 10))
+            self.window.blit(self.VICTORY_IMG, (100, 200))
 
-    def end_game(self):
-        run = True
-        while run:
-            self.window.fill((0,0,0))
-            self.window.blit(self.GAME_OVER_IMG,(0,0))
+            pressKeySurf = self.m_font.render('Your time: {}'.format(diff), True, (255, 155, 0))
+            pressKeyRect = pressKeySurf.get_rect()
+            pressKeyRect.topleft = (180, 420)
+            self.window.blit(pressKeySurf, pressKeyRect)
+
             for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    if event.key == K_DOWN:
+                        pygame.event.get()  # clear event queue
+                        running = False
+
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
             pygame.display.update()
             self.clock.tick(20)
 
+    def end_game(self):
+        running = True
+        end_time = datetime.datetime.now()
+        diff = end_time - self.start_time
+        print(diff)
+        while running:
+            self.window.fill((0,0,0))
+            self.window.blit(self.GAME_OVER_IMG,(0,0))
+
+            pressKeySurf = self.m_font.render('Your time: {}'.format(diff), True, (255, 155, 0))
+            pressKeyRect = pressKeySurf.get_rect()
+            pressKeyRect.topleft = (180, 420)
+            self.window.blit(pressKeySurf, pressKeyRect)
+
+
+            for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    if event.key == K_DOWN:
+                        pygame.event.get()  # clear event queue
+                        running = False
+
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+            pygame.display.update()
+            self.clock.tick(20)
+
+        self.game()
 
     def place_tile(self, column: int, row: int):
         if self.world.value_at_coordinates(row=row, column=column) == 0:
@@ -164,6 +223,8 @@ class Game:
 
             self.move_counter = 0
             self.world.print_world()
+
+
 
 
 g = Game()

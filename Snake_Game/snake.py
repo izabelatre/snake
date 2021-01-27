@@ -37,7 +37,7 @@ class World:
     snake: Snake
     num_of_obstacles: int
     obstacles_placements = list()
-
+    apples_to_win: int = field(init=False)
     list_of_obstacles: list = field(init=False)
     list_of_fruits: list = field(init=False)
     world_data : list = field(init=False)
@@ -177,7 +177,7 @@ class World:
         if (x == 2):
             self.num_of_eaten_fruits+=1
             self.place_fruit()
-            if(self.num_of_eaten_fruits == 15):
+            if(self.num_of_eaten_fruits == self.apples_to_win):
                 self.fruit_eaten = True
             return True
         else:
@@ -198,7 +198,6 @@ class World:
             start: int = 0 + i*20
             end: int = 20 + i*20
             self.world_map[start: end]
-
 
 
 
