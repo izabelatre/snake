@@ -69,12 +69,21 @@ class Game:
         while run:
             self.window.fill((0,0,0))
             self.window.blit(self.START_IMG,(150,100))
+
+            pressKeySurf = self.m_font.render('You have to eat 15 apples to win.', True, (255, 255, 255))
+            pressKeyRect = pressKeySurf.get_rect()
+            pressKeyRect.center = (300, 300)
+            self.window.blit(pressKeySurf, pressKeyRect)
+            self.world.apples_to_win = 15
+
             pressKeySurf = self.m_font.render('Press a key to play.', True, (0,255,0))
             pressKeyRect = pressKeySurf.get_rect()
             pressKeyRect.topleft = (400, 570)
             self.window.blit(pressKeySurf, pressKeyRect)
-            self.world.apples_to_win = 1
+            self.world.apples_to_win = 15
 
+
+            self.click = False
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
@@ -84,10 +93,12 @@ class Game:
                         pygame.event.get()  # clear event queue
                         run = False
                         self.game()
+            pygame.display.update()
 
 
             pygame.display.update()
             self.clock.tick(20)
+
 
     def game(self):
         self.window.fill((0, 0, 0))
