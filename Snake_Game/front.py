@@ -12,7 +12,7 @@ class Game:
     APPLE_IMG = pygame.image.load('apple.png')
     GRASS_IMG = pygame.image.load('grass.JPG')
     OBSTACLE_IMG = pygame.image.load('end.JPG')
-    world = snake.World(snake.Snake(5,(200,200,200)),25)
+    world = snake.World(snake.Snake(5,(200,200,200)),25,10)
     window: pygame.display = field(init=False)
     WINDOW_SIZE = 600
     TILE_SIZE = 30
@@ -41,6 +41,10 @@ class Game:
                 for j in range(0, self.world.CELL_SIZE):
                     self.place_tile(i, j)
             self.move()
+            if self.world.was_obstacle_hit:
+                #end game
+            # zjadl wystarczajaco
+            # zjadl siebie kanibal
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
@@ -92,6 +96,7 @@ class Game:
 
             self.move_counter = 0
             self.world.print_world()
+
 
 
 g = Game()

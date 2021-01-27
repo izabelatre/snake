@@ -36,13 +36,15 @@ class Snake:
 class World:
     snake: Snake
     num_of_obstacles: int
+    num_of_fruits: int
     obstacles_placements = list()
-
+    num_of_fruits_eaten: int = field(default=0)
     list_of_obstacles: list = field(init=False)
     list_of_fruits: list = field(init=False)
     world_data : list = field(init=False)
     world_map: List[int] = field(default_factory=list)
     CELL_SIZE = 20
+    was_obstacle_hit: bool = field(default=False)
 
     def __post_init__(self):
         for i in range(0, self.CELL_SIZE * self.CELL_SIZE):
@@ -121,7 +123,7 @@ class World:
 
         # if (self.has_hit_obstacle(self.world_map[newHead]) == True):
         #     return
-
+        self.has_hit_obstacle(self.world_map[newHead])
         self.snake.snake_placement.insert(HEAD_INDEX, newHead)
         if (self.has_eaten_fruit(self.world_map[newHead]) == False):
             tail_value = self.snake.snake_placement[len(self.snake.snake_placement) - 1]
@@ -132,12 +134,9 @@ class World:
         self.world_map.insert(newHead, 3)
 
 
-    def has_hit_obstacle(self, direction, x) -> bool:
+    def has_hit_obstacle(self, x)  :
         if (x == 1):
-            self.place_fruit()
-            return True
-        else:
-            return False
+            self.was_obstacle_hit = True
 
     def has_eaten_fruit(self, x) -> bool:
         if (x == 2):
@@ -161,6 +160,16 @@ class World:
             end: int = 20 + i*20
             print(self.world_map[start: end])
         print("////////////////")
+
+    def has_eaten_enough(self)-> bool:
+        return self.num_of_fruits_eaten < self.has_eaten_fruit
+
+    #kiedy samobojstwo
+    #kiedy uderzy w przeszkode
+    #liczba owocow z wymaganych
+
+
+
 
 
 
