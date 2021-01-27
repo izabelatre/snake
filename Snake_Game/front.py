@@ -12,7 +12,8 @@ class Game:
     APPLE_IMG = pygame.image.load('apple.png')
     GRASS_IMG = pygame.image.load('grass.JPG')
     OBSTACLE_IMG = pygame.image.load('end.JPG')
-    world = snake.World(snake.Snake(5,(200,200,200)),25)
+    START_IMG = pygame.image.load('start.png')
+    world = snake.World(snake.Snake(5,(200,200,200)), 25)
     window: pygame.display = field(init=False)
     WINDOW_SIZE = 600
     TILE_SIZE = 30
@@ -28,6 +29,16 @@ class Game:
         self.GRASS_IMG = pygame.transform.scale(self.GRASS_IMG, (self.TILE_SIZE, self.TILE_SIZE))
         self.OBSTACLE_IMG = pygame.transform.scale(self.OBSTACLE_IMG, (self.TILE_SIZE, self.TILE_SIZE))
         self.APPLE_IMG = pygame.transform.scale(self.APPLE_IMG, (self.TILE_SIZE, self.TILE_SIZE))
+        self.START_IMG = pygame.transform.scale(self.START_IMG, (300, 200))
+
+    def menu(self):
+        run = True
+        while run:
+            self.window.fill((0, 0, 0))
+            self.window.blit(self.GRASS_IMG, (150, 200))
+            pygame.display.update()
+
+
 
     def game(self):
         self.window.fill((0, 0, 0))
@@ -41,6 +52,10 @@ class Game:
                 for j in range(0, self.world.CELL_SIZE):
                     self.place_tile(i, j)
             self.move()
+            if(self.world.is_dead == True):
+                run = False
+            if(self.world.fruit_eaten):
+                run = False
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
