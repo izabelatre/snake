@@ -16,7 +16,7 @@ class Game:
     window: pygame.display = field(init=False)
     WINDOW_SIZE = 600
     TILE_SIZE = 30
-    NEEDED_TO_MOVE = 30
+    NEEDED_TO_MOVE = 3
     clock = pygame.time.Clock()
     move_counter = 0
     direction = 'up'
@@ -68,7 +68,7 @@ class Game:
 
             pygame.display.update()
 
-            self.clock.tick(200)
+            self.clock.tick(20)
             self.move_counter += 1
 
     def place_tile(self, column: int, row: int):
