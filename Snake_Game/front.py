@@ -14,6 +14,7 @@ class Game:
     OBSTACLE_IMG = pygame.image.load('end.JPG')
     START_IMG = pygame.image.load('start.png')
     HEAD_UP_IMG = pygame.image.load('head_up.JPG')
+    GAME_OVER_IMG = pygame.image.load('gameOver.png')
     world = snake.World(snake.Snake(5,(200,200,200)), 25)
     window: pygame.display = field(init=False)
     WINDOW_SIZE = 600
@@ -35,16 +36,39 @@ class Game:
         self.HEAD_LEFT_IMG = pygame.transform.rotate(self.HEAD_UP_IMG, 90)
         self.HEAD_DOWN_IMG = pygame.transform.rotate(self.HEAD_UP_IMG, 180)
         self.HEAD_RIGHT_IMG = pygame.transform.rotate(self.HEAD_UP_IMG, 270)
+        self.GAME_OVER_IMG = pygame.transform.scale(self.GAME_OVER_IMG, (self.WINDOW_SIZE, self.WINDOW_SIZE))
+
+    def checkForKeyPress():
+        if len(pygame.event.get(QUIT)) > 0:
+            pygame.quit()
+            sys.exit()
+
+        keyUpEvents = pygame.event.get(KEYUP)
+        if len(keyUpEvents) == 0:
+            return None
+        if keyUpEvents[0].key == K_ESCAPE:
+            pygame.quit()
+            sys.exit()
+        return keyUpEvents[0].key
 
 
     def menu(self):
-        self.window.fill((0, 0, 0))
-        self.window.blit(self.GRASS_IMG, (150, 200))
+
         run = True
         while run:
+            self.window.fill((0,0,0))
+            self.window.blit(self.START_IMG,(150,200))
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == KEYDOWN:
+                    if event.key == K_DOWN:
+                        pygame.event.get()  # clear event queue
+                        run = False
+                        self.game()
             pygame.display.update()
-
-
+            self.clock.tick(20)
 
     def game(self):
         self.window.fill((0, 0, 0))
@@ -60,8 +84,10 @@ class Game:
             self.move()
             if(self.world.is_dead == True):
                 run = False
+                self.end_game()
             if(self.world.fruit_eaten):
                 run = False
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
@@ -91,6 +117,22 @@ class Game:
 
             self.clock.tick(200)
             self.move_counter += 1
+
+    def happy_end_game(self):
+        pass
+
+    def end_game(self):
+        run = True
+        while run:
+            self.window.fill((0,0,0))
+            self.window.blit(self.GAME_OVER_IMG,(0,0))
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+            pygame.display.update()
+            self.clock.tick(20)
+
 
     def place_tile(self, column: int, row: int):
         if self.world.value_at_coordinates(row=row, column=column) == 0:
@@ -125,7 +167,4 @@ class Game:
 
 
 g = Game()
-g.game()
-print(g.world.coordinates(150))
-print(g.world.coordinates(170))
-print(g.world.coordinates(190))
+g.menu()
