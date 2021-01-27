@@ -53,12 +53,13 @@ class World:
         self.fruit_eaten = False
         self.is_dead = False
         self.num_of_eaten_fruits = 0
+        self.head = 190
 
     # 150, 170
     # 190, 210, 230, 250, 270, 290
 
     def place_obstacles(self):
-        snake_start_placements_ = list([170, 190, 210, 230, 250, 270, 290])
+        snake_start_placements_ = list([150,170, 190, 210, 230, 250, 270, 290])
         while len(self.obstacles_placements) < self.num_of_obstacles:
             num = randrange(self.CELL_SIZE * self.CELL_SIZE)
             if num not in self.obstacles_placements:
@@ -68,19 +69,53 @@ class World:
                     self.world_map.insert(num, 1)
 
     def place_fruit(self):
-
         run = True
+        num_ = 0
         while run:
             num = randrange(self.CELL_SIZE * self.CELL_SIZE)
             if self.world_map[num] != 1 and self.world_map[num] != 3:
-                run = False
-                self.world_map.pop(num)
-                self.world_map.insert(num, 2)
+                if num<20:
+                    if self.world_map[num+ 380] == 1:
+                        num_+=1
+                else:
+                    if self.world_map[num -20] ==1:
+                        num_+=1
+
+                if num > 380:
+                    if self.world_map[num-380] == 1:
+                        num_+=1
+                else:
+                    if self.world_map[num+20] == 1:
+                        num_+=1
+                if num == 0:
+                    if self.world_map[399] == 1:
+                        num_ += 1
+                else:
+                    if self.world_map[num-1] == 1:
+                        num_+=1
+
+                if num == 399:
+                    if self.world_map[0] == 1:
+                        num_+=1
+                else:
+                    if self.world_map[num+1]==1:
+                        num_+=1
+
+                if num_<3:
+                    run = False
+                    self.world_map.pop(num)
+                    self.world_map.insert(num, 2)
 
     def value_at_coordinates(self, row: int, column: int) -> int:
         if row < self.CELL_SIZE and column < self.CELL_SIZE:
             index = row*20 + column
             return self.world_map[index]
+
+    def coordinates(self, value) ->list:
+        column = value%20
+        row = (value-column)/20
+        return [row, column]
+
 
 
     def snake_placement(self):
@@ -114,6 +149,7 @@ class World:
                 newHead = self.snake.snake_placement[0] - 19
 
         self.snake.snake_placement.insert(HEAD_INDEX, newHead)
+        self.head = newHead
         self.has_suicided()
         self.has_hit_obstacle(self.world_map[newHead]);
         if (self.has_eaten_fruit(self.world_map[newHead]) == False):
@@ -123,6 +159,12 @@ class World:
             self.snake.snake_placement.pop(len(self.snake.snake_placement) - 1)
         self.world_map.pop(newHead)
         self.world_map.insert(newHead, 3)
+        check = False
+        for var in self.world_map:
+            if var == 2:
+                check = True
+        if check == False:
+            self.place_fruit()
 
 
     def has_hit_obstacle(self, x):
@@ -155,8 +197,8 @@ class World:
         for i in range(0, self.CELL_SIZE):
             start: int = 0 + i*20
             end: int = 20 + i*20
-            print(self.world_map[start: end])
-        print("////////////////")
+            self.world_map[start: end]
+
 
 
 
