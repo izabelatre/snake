@@ -68,7 +68,7 @@ class Game:
 
             pygame.display.update()
 
-            self.clock.tick(60)
+            self.clock.tick(200)
             self.move_counter += 1
 
     def place_tile(self, column: int, row: int):
@@ -82,7 +82,7 @@ class Game:
             snake_part = pygame.Rect(column * self.TILE_SIZE, row*self.TILE_SIZE, self.TILE_SIZE, self.TILE_SIZE)
             snake_part_inner = pygame.Rect(column * self.TILE_SIZE + 4, row*self.TILE_SIZE +4, self.TILE_SIZE-8, self.TILE_SIZE-8)
             pygame.draw.rect(self.window, (150,255,100), snake_part)
-            pygame.draw.rect(self.window, (0,0,0), snake_part_inner)
+            pygame.draw.rect(self.window, (0,255,0), snake_part_inner)
 
     def move(self):
         if not self.move_counter < self.NEEDED_TO_MOVE:
