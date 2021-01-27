@@ -86,7 +86,7 @@ class World:
          for place in self.snake.snake_placement:
             self.world_map.insert(place, 3)
 
-    def move_snake(self, direction: str):
+    def move_snake(self, direction: str) -> bool:
 
         if direction == UP:
             newHead = self.snake.snake_placement[0] - self.CELL_SIZE
@@ -112,6 +112,9 @@ class World:
             if (newHead % 20 == 0):
                 newHead = self.snake.snake_placement[0] - 19
 
+        if (self.has_hit_obstacle(self.world_map[newHead]) == True):
+            return False
+
         self.snake.snake_placement.insert(HEAD_INDEX, newHead)
         if (self.has_eaten_fruit(self.world_map[newHead])== False):
             tail_value = self.snake.snake_placement[len(self.snake.snake_placement)-1]
@@ -120,13 +123,16 @@ class World:
             self.snake.snake_placement.pop(len(self.snake.snake_placement)-1)
         self.world_map.pop(newHead)
         self.world_map.insert(newHead, 3)
+        return True
 
 
 
-    def has_hit_obstacle(self, direction) -> bool:
-            for var in self.place_obstacles():
-                if(self.snake.snake_placement[HEAD_INDEX] == var):
-                    return True
+    def has_hit_obstacle(self, x) -> bool:
+        if (x == 1):
+            self.place_fruit()
+            return True
+        else:
+            return False
 
     def has_eaten_fruit(self, x) -> bool:
         if( x == 2):

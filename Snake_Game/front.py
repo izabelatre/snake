@@ -37,14 +37,15 @@ class Game:
 
         run = True
         while run:
-            for i in range(0, self.world.CELL_SIZE):
-                for j in range(0, self.world.CELL_SIZE):
-                    self.place_tile(i, j)
-            self.move()
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
+            if (self.move() == True):
+                for i in range(0, self.world.CELL_SIZE):
+                    for j in range(0, self.world.CELL_SIZE):
+                        self.place_tile(i, j)
+
                 if event.type == KEYDOWN:
                     if event.key == K_DOWN:
                         if(self.direction != 'up'):
@@ -67,7 +68,6 @@ class Game:
                             print("LEFT")
 
             pygame.display.update()
-
             self.clock.tick(60)
             self.move_counter += 1
 
@@ -84,13 +84,15 @@ class Game:
             pygame.draw.rect(self.window, (150,255,100), snake_part)
             pygame.draw.rect(self.window, (0,0,0), snake_part_inner)
 
-    def move(self):
+    def move(self) -> bool:
         if not self.move_counter < self.NEEDED_TO_MOVE:
             #NUM_OF_FRUITS_TO_WIN, fruit_counter
             #direction right, bottom str...
-            self.world.move_snake(self.direction)
+            if(self.world.move_snake(self.direction) == False):
+                return False
             self.move_counter = 0
             self.world.print_world()
+            return True
 
 
 
