@@ -12,11 +12,13 @@ class Game:
     APPLE_IMG = pygame.image.load('apple.png')
     GRASS_IMG = pygame.image.load('grass.JPG')
     OBSTACLE_IMG = pygame.image.load('end.JPG')
+    GAME_OVER_IMG = pygame.image.load('gameOver.png')
     world = snake.World(snake.Snake(5,(200,200,200)),25)
     window: pygame.display = field(init=False)
     WINDOW_SIZE = 600
     TILE_SIZE = 30
     NEEDED_TO_MOVE = 30
+    is_game_over = False
     clock = pygame.time.Clock()
     move_counter = 0
     direction = 'up'
@@ -28,20 +30,23 @@ class Game:
         self.GRASS_IMG = pygame.transform.scale(self.GRASS_IMG, (self.TILE_SIZE, self.TILE_SIZE))
         self.OBSTACLE_IMG = pygame.transform.scale(self.OBSTACLE_IMG, (self.TILE_SIZE, self.TILE_SIZE))
         self.APPLE_IMG = pygame.transform.scale(self.APPLE_IMG, (self.TILE_SIZE, self.TILE_SIZE))
+        self.GAME_OVER_IMG = pygame.transform.scale(self.GAME_OVER_IMG, (self.TILE_SIZE*20, self.TILE_SIZE*20))
 
     def game(self):
-        self.window.fill((0, 0, 0))
-        self.world.place_obstacles()
-        self.world.place_fruit()
-        self.world.snake_placement()
+        process = True
+        while process:
+            self.window.fill((0, 0, 0))
+            self.world.place_obstacles()
+            self.world.place_fruit()
+            self.world.snake_placement()
 
-        run = True
-        while run:
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    pygame.quit()
-                    sys.exit()
-            if (self.move() == True):
+            run = True
+            while run:
+                for event in pygame.event.get():
+                    if event.type == QUIT:
+                        pygame.quit()
+                        sys.exit()
+                self.move()
                 for i in range(0, self.world.CELL_SIZE):
                     for j in range(0, self.world.CELL_SIZE):
                         self.place_tile(i, j)
@@ -66,10 +71,23 @@ class Game:
                         if(self.direction != 'right'):
                             self.direction ='left'
                             print("LEFT")
+                self.clock.tick(60)
+                self.move_counter += 1
+                if(self.is_game_over == True):
+                    run = False
 
-            pygame.display.update()
-            self.clock.tick(60)
-            self.move_counter += 1
+                pygame.display.update()
+
+            while self.is_game_over:
+
+                pygame.display.update()
+                self.window.blit(self.GAME_OVER_IMG, (0, 0))
+                if event.type == KEYDOWN:
+                    self.is_game_over == False
+                    run == True
+
+
+
 
     def place_tile(self, column: int, row: int):
         if self.world.value_at_coordinates(row=row, column=column) == 0:
@@ -84,15 +102,15 @@ class Game:
             pygame.draw.rect(self.window, (150,255,100), snake_part)
             pygame.draw.rect(self.window, (0,0,0), snake_part_inner)
 
-    def move(self) -> bool:
+    def move(self):
         if not self.move_counter < self.NEEDED_TO_MOVE:
             #NUM_OF_FRUITS_TO_WIN, fruit_counter
             #direction right, bottom str...
             if(self.world.move_snake(self.direction) == False):
-                return False
+                self.is_game_over = True
             self.move_counter = 0
             self.world.print_world()
-            return True
+
 
 
 
